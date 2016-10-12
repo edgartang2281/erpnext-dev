@@ -27,6 +27,7 @@ def work():
 		for mr in frappe.get_all('Material Request',
 			filters={'material_request_type': 'Purchase', 'status': 'Open'},
 			limit=random.randint(1,6)):
+			print mr.name
 			if not frappe.get_all('Request for Quotation',
 				filters={'material_request': mr.name}, limit=1):
 				rfq = make_request_for_quotation(mr.name)
@@ -103,12 +104,14 @@ def make_material_request(item_code, qty):
 		mr.material_request_type = "Purchase"
 
 	mr.transaction_date = frappe.flags.current_date
-	
+
+	moq = frappe.db.get_value('Item', item_code, 'min_order_qty')
+
 	mr.append("items", {
 		"doctype": "Material Request Item",
 		"schedule_date": frappe.utils.add_days(mr.transaction_date, 7),
 		"item_code": item_code,
-		"qty": qty
+		"qty": qty if qty > moq else moq
 	})
 	mr.insert()
 	mr.submit()
@@ -122,33 +125,33 @@ def add_suppliers(rfq):
 
 def make_subcontract():
 	from erpnext.buying.doctype.purchase_order.purchase_order import make_stock_entry
+
+	# make sub-contract PO
+	po = frappe.new_doc("Purchase Order")
+	po.is_subcontracted = "Yes"
+	po.supplier = get_random("Supplier")
+
 	item_code = get_random("Item", {"is_sub_contracted_item": 1})
-	if item_code:
-		# make sub-contract PO
-		po = frappe.new_doc("Purchase Order")
-		po.is_subcontracted = "Yes"
-		po.supplier = get_random("Supplier")
+	moq = frappe.db.get_value('Item', item_code, 'min_order_qty')
 
-		item_code = get_random("Item", {"is_sub_contracted_item": 1})
-		
-		po.append("items", {
-			"item_code": item_code,
-			"schedule_date": frappe.utils.add_days(frappe.flags.current_date, 7),
-			"qty": random.randint(10, 30)
-		})
-		po.set_missing_values()
-		try:
-			po.insert()
-		except InvalidCurrency:
-			return
+	po.append("items", {
+		"item_code": item_code,
+		"schedule_date": frappe.utils.add_days(frappe.flags.current_date, 7),
+		"qty": moq
+	})
+	po.set_missing_values()
+	try:
+		po.insert()
+	except InvalidCurrency:
+		return
 
-		po.submit()
+	po.submit()
 
-		# make material request for
-		make_material_request(po.items[0].item_code, po.items[0].qty)
+	# make material request for
+	make_material_request(po.items[0].item_code, po.items[0].qty)
 
-		# transfer material for sub-contract
-		stock_entry = frappe.get_doc(make_stock_entry(po.name, po.items[0].item_code))
-		stock_entry.from_warehouse = "Stores - WPL"
-		stock_entry.to_warehouse = "Supplier - WPL"
-		stock_entry.insert()
+	# transfer material for sub-contract
+	stock_entry = frappe.get_doc(make_stock_entry(po.name, po.items[0].item_code))
+	stock_entry.from_warehouse = "Stores - WPL"
+	stock_entry.to_warehouse = "Supplier - WPL"
+	stock_entry.insert()

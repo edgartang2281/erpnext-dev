@@ -278,7 +278,7 @@ def add_node():
 		parent = None
 
 	doc.update({
-		name_field: frappe.form_dict['warehouse_name'],
+		name_field: frappe.form_dict['name_field'],
 		parent_field: parent,
 		"is_group": frappe.form_dict['is_group'],
 		"company": company

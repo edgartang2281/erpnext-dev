@@ -1,5 +1,5 @@
+student-applicant
 student
-student-log
-student-batch
+program-enrollment
 student-group
 student-group-creation-tool

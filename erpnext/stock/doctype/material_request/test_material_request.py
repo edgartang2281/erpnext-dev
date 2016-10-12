@@ -66,6 +66,7 @@ class TestMaterialRequest(unittest.TestCase):
 				"posting_date": "2013-03-01",
 				"posting_time": "00:00:00",
 				"purpose": "Material Receipt",
+				"fiscal_year": "_Test Fiscal Year 2013",
 				"items": [
 					{
 						"conversion_factor": 1.0,
@@ -78,7 +79,6 @@ class TestMaterialRequest(unittest.TestCase):
 						"transfer_qty": qty1,
 						"uom": "_Test UOM 1",
 						"t_warehouse": warehouse or "_Test Warehouse 1 - _TC",
-						"cost_center": "_Test Cost Center - _TC"
 					},
 					{
 						"conversion_factor": 1.0,
@@ -91,7 +91,6 @@ class TestMaterialRequest(unittest.TestCase):
 						"transfer_qty": qty2,
 						"uom": "_Test UOM 1",
 						"t_warehouse": warehouse or "_Test Warehouse 1 - _TC",
-						"cost_center": "_Test Cost Center - _TC"
 					}
 				]
 			})

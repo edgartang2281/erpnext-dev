@@ -18,7 +18,7 @@ def get_domain(domain):
 			'set_value': [
 				['Stock Settings', None, 'show_barcode_field', 1]
 			],
-			'default_portal_role': 'Customer'
+			'remove_sidebar_items': ['/announcement', '/course', '/assessment', '/fees']
 		},
 
 		'Retail': {
@@ -32,7 +32,7 @@ def get_domain(domain):
 			'set_value': [
 				['Stock Settings', None, 'show_barcode_field', 1]
 			],
-			'default_portal_role': 'Customer'
+			'remove_sidebar_items': ['/announcement', '/course', '/assessment', '/fees']
 		},
 
 		'Distribution': {
@@ -45,7 +45,7 @@ def get_domain(domain):
 			'set_value': [
 				['Stock Settings', None, 'show_barcode_field', 1]
 			],
-			'default_portal_role': 'Customer'
+			'remove_sidebar_items': ['/announcement', '/course', '/assessment', '/fees']
 		},
 
 		'Services': {
@@ -58,15 +58,14 @@ def get_domain(domain):
 			'set_value': [
 				['Stock Settings', None, 'show_barcode_field', 0]
 			],
-			'default_portal_role': 'Customer'
+			'remove_sidebar_items': ['/announcement', '/course', '/assessment', '/fees']
 		},
 		'Education': {
 			'desktop_icons': ['Student', 'Program', 'Course', 'Student Group', 'Instructor',
 				'Fees',  'ToDo', 'Schools'],
 			'allow_roles': ['Academics User', 'Accounts User', 'Accounts Manager', 'Item Manager',
-				'Website Manager', 'HR User', 'HR Manager', 'Purchase User', 'Purchase Manager',
-				'Student'],
-			'default_portal_role': 'Student'
+				'Website Manager', 'HR User', 'HR Manager', 'Purchase User', 'Purchase Manager'],
+			'allow_sidebar_items': ['/announcement', '/course', '/assessment', '/fees']
 		},
 	}
 	if not domain in data:
@@ -81,8 +80,6 @@ def setup_domain(domain):
 	setup_properties(data)
 	set_values(data)
 	setup_sidebar_items(data)
-	if data.get('default_portal_role'):
-		frappe.db.set_value('Portal Settings', None, 'default_role', data.get('default_portal_role'))
 	frappe.clear_cache()
 
 def setup_desktop_icons(data):

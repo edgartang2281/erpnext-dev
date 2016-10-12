@@ -11,7 +11,7 @@ frappe.treeview_settings['Warehouse'] = {
 		default: frappe.defaults.get_default('company') ? frappe.defaults.get_default('company'): ""
 	}],
 	fields:[
-		{fieldtype:'Data', fieldname: 'warehouse_name',
+		{fieldtype:'Data', fieldname: 'name_field',
 			label:__('New Warehouse Name'), reqd:true},
 		{fieldtype:'Check', fieldname:'is_group', label:__('Is Group'),
 			description: __("Child nodes can be only created under 'Group' type nodes")}

@@ -41,6 +41,14 @@ erpnext.stock.StockEntry = erpnext.stock.StockController.extend({
 				}
 			}
 		}
+
+		this.frm.get_field('items').grid.editable_fields = [
+			{fieldname: 'item_code', columns: 3},
+			{fieldname: 'qty', columns: 3},
+			{fieldname: 's_warehouse', columns: 2},
+			{fieldname: 't_warehouse', columns: 2}
+		];
+
 	},
 
 	onload_post_render: function() {
@@ -348,6 +356,7 @@ cur_frm.fields_dict['production_order'].get_query = function(doc) {
 }
 
 cur_frm.cscript.purpose = function(doc, cdt, cdn) {
+	cur_frm.fields_dict.items.grid.refresh();
 	cur_frm.cscript.toggle_related_fields(doc);
 }
 

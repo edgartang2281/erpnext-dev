@@ -56,6 +56,7 @@ class ReceivablePayableReport(object):
 			"{range1}-{range2}".format(range1=cint(self.filters["range1"])+ 1, range2=self.filters["range2"]),
 			"{range2}-{range3}".format(range2=cint(self.filters["range2"])+ 1, range3=self.filters["range3"]),
 			"{range3}-{above}".format(range3=cint(self.filters["range3"])+ 1, above=_("Above"))):
+				frappe.errprint(label)
 				columns.append({
 					"label": label,
 					"fieldtype": "Currency",
@@ -93,9 +94,10 @@ class ReceivablePayableReport(object):
 		data = []
 		for gle in self.get_entries_till(self.filters.report_date, args.get("party_type")):
 			if self.is_receivable_or_payable(gle, dr_or_cr, future_vouchers):
-				outstanding_amount = self.get_outstanding_amount(gle, self.filters.report_date, dr_or_cr)
+				outstanding_amount = flt(self.get_outstanding_amount(gle, 
+					self.filters.report_date, dr_or_cr), currency_precision)
+					
 				if abs(outstanding_amount) > 0.1/10**currency_precision:
-
 					row = [gle.posting_date, gle.party]
 
 					# customer / supplier name
@@ -218,14 +220,16 @@ class ReceivablePayableReport(object):
 			conditions, values = self.prepare_conditions(party_type)
 
 			if self.filters.get(scrub(party_type)):
-				select_fields = "debit_in_account_currency as debit, credit_in_account_currency as credit"
+				select_fields = "sum(debit_in_account_currency) as debit, sum(credit_in_account_currency) as credit"
 			else:
-				select_fields = "debit, credit"
+				select_fields = "sum(debit) as debit, sum(credit) as credit"
 
-			self.gl_entries = frappe.db.sql("""select name, posting_date, account, party_type, party,
-				voucher_type, voucher_no, against_voucher_type, against_voucher, account_currency, remarks, {0}
+			self.gl_entries = frappe.db.sql("""select name, posting_date, account, party_type, party, 
+				voucher_type, voucher_no, against_voucher_type, against_voucher, 
+				account_currency, remarks, {0}
 				from `tabGL Entry`
 				where docstatus < 2 and party_type=%s and (party is not null and party != '') {1}
+				group by voucher_type, voucher_no, against_voucher_type, against_voucher, party
 				order by posting_date, party"""
 				.format(select_fields, conditions), values, as_dict=True)
 

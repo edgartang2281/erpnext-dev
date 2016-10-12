@@ -55,7 +55,8 @@ class ProductionOrder(Document):
 				if not self.expected_delivery_date:
 					self.expected_delivery_date = so[0].delivery_date
 
-				self.project = so[0].project
+				if so[0].project:
+					self.project = so[0].project
 
 				self.validate_production_order_against_so()
 			else:
@@ -478,12 +479,10 @@ def make_stock_entry(production_order_id, purpose, qty=None):
 		if production_order.source_warehouse:
 			stock_entry.from_warehouse = production_order.source_warehouse
 		stock_entry.to_warehouse = production_order.wip_warehouse
-		stock_entry.project = production_order.project
 	else:
 		stock_entry.from_warehouse = production_order.wip_warehouse
 		stock_entry.to_warehouse = production_order.fg_warehouse
 		additional_costs = get_additional_costs(production_order, fg_qty=stock_entry.fg_completed_qty)
-		stock_entry.project = frappe.db.get_value("Stock Entry",{"production_order": production_order_id,"purpose": "Material Transfer for Manufacture"}, "project")
 		stock_entry.set("additional_costs", additional_costs)
 
 	stock_entry.get_items()
