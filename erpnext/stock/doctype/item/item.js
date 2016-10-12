@@ -13,6 +13,10 @@ frappe.ui.form.on("Item", {
 		// should never check Private
 		frm.fields_dict["website_image"].df.is_private = 0;
 
+		// tangxuejun 20161007 add stt
+		if(frm.doc.stock_uom)
+			frm.set_value("stock_uom", "EACH");
+		// tangxuejun 20161007 add end
 	},
 
 	refresh: function(frm) {
@@ -102,6 +106,10 @@ frappe.ui.form.on("Item", {
 			frm.set_value("item_name", frm.doc.item_code);
 		if(!frm.doc.description)
 			frm.set_value("description", frm.doc.item_code);
+		// tangxuejun 20161007 add stt
+		if(!frm.doc.barcode)
+			frm.set_value("barcode", frm.doc.item_code);
+		// tangxuejun 20161007 add end
 	},
 
 	copy_from_item_group: function(frm) {

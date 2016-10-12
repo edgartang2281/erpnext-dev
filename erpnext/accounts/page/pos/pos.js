@@ -356,6 +356,14 @@ erpnext.pos.PointOfSale = erpnext.taxes_and_totals.extend({
 					|| (data.customer_group && reg.test(data.customer_group.toLowerCase()))){
 					return data
 				}
+				// 20161010 tangxuejun add stt
+				if (data.mobile != null && data.mobile.match(key)) {
+					return data
+				}
+				if (data.landline != null && data.landline.match(key)) {
+					return data
+				}
+				// 20161010 tangxuejun add end
 			})
 		}else{
 			customers = this.customers.sort(function(a,b){ return a.idx < b.idx })
@@ -381,7 +389,10 @@ erpnext.pos.PointOfSale = erpnext.taxes_and_totals.extend({
 					$(frappe.render_template("pos_item", {
 						item_code: obj.name,
 						item_price: format_currency(obj.price_list_rate, obj.currency),
-						item_name: obj.name===obj.item_name ? "" : obj.item_name,
+						// 20161010 tangxuejun modify stt
+						//item_name: obj.name===obj.item_name ? "" : obj.item_name,
+						item_name: ( obj.name=== obj.item_name ? "" : obj.item_name ) + " ,Price List: " + obj.price_list_by_code,
+						// 20161010 tangxuejun modify end
 						item_image: obj.image ? "url('" + obj.image + "')" : null,
 						color: frappe.get_palette(obj.item_name),
 						abbr: frappe.get_abbr(obj.item_name)
@@ -594,6 +605,9 @@ erpnext.pos.PointOfSale = erpnext.taxes_and_totals.extend({
 		var me = this;
 		this.child = frappe.model.add_child(this.frm.doc, this.frm.doc.doctype + " Item", "items");
 		this.child.item_code = this.items[0].item_code;
+		// 20161010 tangxuejun add stt
+		this.child.price_list_by_code = me.items[0].price_list_by_code;
+		// 20161010 tangxuejun add end
 		this.child.item_name = this.items[0].item_name;
 		this.child.stock_uom = this.items[0].stock_uom;
 		this.child.description = this.items[0].description;
@@ -652,9 +666,18 @@ erpnext.pos.PointOfSale = erpnext.taxes_and_totals.extend({
 		var me = this;
 		var $items = this.wrapper.find(".items").empty();
 		$.each(this.frm.doc.items|| [], function(i, d) {
+			// 20161011 tangxuejun add stt			
+			var codeListStr = "";
+			for (var iter in d.price_list_by_code) {  
+			    codeListStr += d.price_list_by_code[iter] + "/"; 
+			}
+			// 20161011 tangxuejun add end
 			$(frappe.render_template("pos_bill_item", {
 				item_code: d.item_code,
-				item_name: (d.item_name===d.item_code || !d.item_name) ? "" : ("<br>" + d.item_name),
+				// 20161010 tangxuejun modify stt
+				//item_name: (d.item_name===d.item_code || !d.item_name) ? "" : ("<br>" + d.item_name),
+				item_name: (d.item_name===d.item_code || !d.item_name) ? "" : ("<br>" + d.item_name + "<br>" + codeListStr),
+				// 20161010 tangxuejun modify end
 				qty: d.qty,
 				actual_qty: d.actual_qty,
 				projected_qty: d.projected_qty,
