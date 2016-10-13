@@ -118,7 +118,11 @@ def get_items(doc, pos_profile):
 		item.price_list_rate = frappe.db.get_value('Item Price', {'item_code': item.name,
 									'price_list': doc.selling_price_list}, 'price_list_rate') or 0
 		""" 20161007 tangxuejun add stt """
-		item.price_list_by_code = frappe.db.get_values('Item Price', {'item_code': item.name}, 'price_list_rate', order_by='price_list') or 0
+		price_list_by_code = frappe.db.get_values('Item Price', {'item_code': item.name}, 'price_list_rate', as_dict=1, order_by='price_list')
+		priceListStr = ""		
+		for price_list in price_list_by_code:
+			priceListStr = priceListStr + str(price_list["price_list_rate"]) + "/"
+		item.price_list_by_code = priceListStr
 		""" 20161007 tangxuejun add end """
 		item.default_warehouse = pos_profile.get('warehouse') or \
 			get_item_warehouse_for_company(doc.company, item.default_warehouse) or None
