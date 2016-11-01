@@ -1,0 +1,120 @@
+<style>
+	.print-format table, .print-format tr, 
+	.print-format td, .print-format div, .print-format p {
+		font-family: Monospace;
+		line-height: 200%;
+		vertical-align: middle;
+	}
+	@media screen {
+		.print-format {
+			width: 4in;
+			padding: 0.25in;
+			min-height: 8in;
+		}
+	}
+</style>
+
+<p class="text-center">
+	{{ doc.company }}<br>
+	{{ doc.select_print_heading or _("Invoice") }}<br>
+</p>
+<p>
+	<b>{{ _("Receipt No") }}:</b> {{ doc.name }}<br>
+	<b>{{ _("Date") }}:</b> {{ doc.get_formatted("posting_date") }}<br>
+	<b>{{ _("GST NO") }}:</b> {{ doc.terms }}<br>
+	<b>{{ _("Customer") }}:</b> {{ doc.customer_name }}
+</p>
+
+<hr>
+<table class="table table-condensed cart no-border">
+	<thead>
+		<tr>
+			<th width="50%">{{ _("Item") }}</b></th>
+			<th width="25%" class="text-right">{{ _("Qty") }}</th>
+			<th width="25%" class="text-right">{{ _("Amount") }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{%- for item in doc.items -%}
+		<tr>
+			<td>
+				{{ item.item_code }}
+				{%- if item.item_name != item.item_code -%}
+					<br>{{ item.item_name }}{%- endif -%}
+			</td>
+			<td class="text-right">{{ item.qty }}<br>@ {{ item.get_formatted("rate") }}</td>
+			<td class="text-right">{{ item.get_formatted("amount") }}</td>
+		</tr>
+		{%- endfor -%}
+	</tbody>
+</table>
+<table class="table table-condensed no-border">
+	<tbody>
+		<tr>
+			<td class="text-right" style="width: 70%">
+				{{ _("Net Total") }}
+			</td>
+			<td class="text-right">
+				{{ doc.get_formatted("net_total") }}
+			</td>
+		</tr>
+		{%- for row in doc.taxes -%}
+		{%- if not row.included_in_print_rate -%}
+		<tr>
+			<td class="text-right" style="width: 70%">
+				{{ row.description }}
+			</td>
+			<td class="text-right">
+				{{ row.get_formatted("tax_amount", doc) }}
+			</td>
+		</tr>
+		{%- endif -%}
+		{%- endfor -%}
+		{%- if doc.discount_amount -%}
+		<tr>
+			<td class="text-right" style="width: 75%">
+				{{ _("Discount") }}
+			</td>
+			<td class="text-right">
+				{{ doc.get_formatted("discount_amount") }}
+			</td>
+		</tr>
+		{%- endif -%}
+		<tr>
+			<td class="text-right" style="width: 75%">
+				<b>{{ _("Grand Total") }}</b>
+			</td>
+			<td class="text-right">
+				{{ doc.get_formatted("grand_total") }}
+			</td>
+		</tr>
+		
+	</tbody>
+</table>
+<p><b>Taxes Included:</b></p>
+<table class="table table-condensed no-border">
+	<tbody>
+		{%- for row in doc.taxes -%}
+		<tr>
+			<td class="text-right" style="width: 75%">
+				{{ row.description }}
+			</td>
+			<td class="text-right">
+				{{ row.get_formatted("tax_amount_after_discount_amount", doc) }}
+			</td>
+		<tr>
+		{%- else -%}
+		<tr>
+			<td class="text-right" style="width: 75%">
+				{{ _("GST") }}
+			</td>
+			<td class="text-right">
+				{{ _("$ 0.00") }}
+			</td>
+		<tr>
+		{%- endfor -%}
+	</tbody>
+</table>
+<hr>
+
+<p class="text-center">{{ _("Thank you, please visit again.") }}</p>

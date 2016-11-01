@@ -1,0 +1,121 @@
+<style>
+	.print-format table, .print-format tr, 
+	.print-format td, .print-format div, .print-format p {
+		font-family: Monospace;
+		line-height: 200%;
+		vertical-align: middle;
+	}
+	@media screen {
+		.print-format {
+			width: 4in;
+			padding: 0.25in;
+			min-height: 8in;
+		}
+	}
+</style>
+
+<p class="text-center">
+	{{ company }}<br>
+	{{  __("POS No : ") }}{{offline_pos_name}}<br>
+</p>
+<p>
+	<b>{{ __("Date") }}:</b> {{ dateutil.global_date_format(posting_date) }}<br>
+	<b>{{ __("GST NO") }}:</b> {{ gst_number}}<br>
+	<b>{{ __("Customer") }}:</b> {{ customer}}<br>
+</p>
+
+<hr>
+<table class="table table-condensed cart no-border">
+	<thead>
+		<tr>
+			<th width="50%">{{ __("Item") }}</b></th>
+			<th width="25%" class="text-right">{{ __("Qty") }}</th>
+			<th width="25%" class="text-right">{{ __("Amount") }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for item in items %}
+		<tr>
+			<td>
+				{{ item.item_name }}
+			</td>
+			<td class="text-right">{{ format_number(item.qty, precision("difference")) }}<br>@ {{ format_currency(item.rate, currency) }}</td>
+			<td class="text-right">{{ format_currency(item.amount, currency) }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+<table class="table table-condensed no-border">
+	<tbody>
+		<tr>
+			<td class="text-right" style="width: 70%">
+				{{ __("Net Total") }}
+			</td>
+			<td class="text-right">
+				{{ format_currency(total, currency) }}
+			</td>
+		</tr>
+		{% if discount_amount %}
+		<tr>
+			<td class="text-right" style="width: 75%">
+				{{ __("Discount") }}
+			</td>
+			<td class="text-right">
+				{{ format_currency(discount_amount, currency) }}
+			</td>
+		</tr>
+		{% endif %}
+		<tr>
+			<td class="text-right" style="width: 75%">
+				<b>{{ __("Grand Total") }}</b>
+			</td>
+			<td class="text-right">
+				{{ format_currency(grand_total, currency) }}
+			</td>
+		</tr>
+		{% for row in payments%}
+		{% if row.amount != 0 %}
+		<tr>
+			<td class="text-right" style="width: 75%">
+				<b>{{ row.mode_of_payment }}</b>
+			</td>
+			<td class="text-right">
+				{{ format_currency(row.amount, currency) }}
+			</td>
+		</tr>
+		{% endif %}
+		{% endfor %}
+	</tbody>
+</table>
+
+<hr>
+<p><b>Taxes Included:</b></p>
+<table class="table table-condensed no-border">
+	<tbody>
+		{% for row in taxes %}
+		<tr>
+			<td class="text-right" style="width: 75%">
+				{{ row.description }}
+			</td>
+			<td class="text-right">
+				{{ format_currency(row.tax_amount, currency) }}
+			</td>
+		</tr>
+		{% endfor %}
+		{% if taxes.length == 0 %}
+		<tr>
+			<td class="text-right" style="width: 75%">
+				{{ __("GST") }}
+			</td>
+			<td class="text-right">
+				{{ format_currency("0.00", currency) }}
+			</td>
+		</tr>
+		{% endif %}
+	</tbody>
+</table>
+
+<hr>
+<p class="text-center">{{ warehouse }}</p>
+<p class="text-center">{{ __("Thank you, please visit again.") }}</p>
