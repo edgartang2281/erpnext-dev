@@ -18,10 +18,12 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 		}
 		
 		// tangxuejun 20161101 add stt
-		if(!this.frm.doc.update_stock)
-			this.frm.set_value("update_stock", "1");
-		if(!this.frm.doc.tc_name)
-			this.frm.set_value("tc_name", "GST NO");
+		if(this.frm.doc.docstatus==0){
+			if(!this.frm.doc.update_stock)
+				this.frm.set_value("update_stock", "1");
+			if(!this.frm.doc.tc_name)
+				this.frm.set_value("tc_name", "GST NO");
+		}
 		// tangxuejun 20161101 add end
 
 		erpnext.queries.setup_queries(this.frm, "Warehouse", function() {
