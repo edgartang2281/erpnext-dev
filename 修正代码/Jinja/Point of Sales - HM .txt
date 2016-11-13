@@ -15,32 +15,39 @@
 </style>
 
 <p class="text-center">
-	{{ company }}<br>
-	{{  __("POS No : ") }}{{offline_pos_name}}<br>
+	<b>{{ company }}</b><br>
+	<b>{{  __("POS No : ") }}{{offline_pos_name}}</b><br>
 </p>
 <p>
-	<b>{{ __("Date") }}:</b> {{ dateutil.global_date_format(posting_date) }}<br>
-	<b>{{ __("GST NO") }}:</b> {{ gst_number}}<br>
-	<b>{{ __("Customer") }}:</b> {{ customer}}<br>
+	<b>{{ __("Date") }}:</b> <b>{{ dateutil.global_date_format(posting_date) }}</b><br>
+	<b>{{ __("GST NO") }}:</b> <b>{{ gst_number}}</b><br>
+	<b>{{ __("Customer") }}:</b> <b>{{ customer}}</b><br>
 </p>
 
 <hr>
 <table class="table table-condensed cart no-border">
 	<thead>
 		<tr>
-			<th width="50%">{{ __("Item") }}</b></th>
-			<th width="25%" class="text-right">{{ __("Qty") }}</th>
-			<th width="25%" class="text-right">{{ __("Amount") }}</th>
+			<th width="25%"><b>{{ __("Item") }}</b></th>
+			<th width="50%" class="text-right"><b>{{ __("Qty") }}</b></th>
+			<th width="25%" class="text-right"><b>{{ __("Amount") }}</b></th>
 		</tr>
 	</thead>
 	<tbody>
 		{% for item in items %}
 		<tr>
-			<td>
-				{{ item.item_name }}
+			<td colspan=3>
+				<b>{{ item.item_name }}</b>
 			</td>
-			<td class="text-right">{{ format_number(item.qty, precision("difference")) }}<br>@ {{ format_currency(item.rate, currency) }}</td>
-			<td class="text-right">{{ format_currency(item.amount, currency) }}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td class="text-right">
+				<b>{{ item.qty }} * {{ format_currency(item.rate, currency) }}</b>
+			</td>
+			<td class="text-right">
+				<b>{{ format_currency(item.amount, currency) }}</b>
+			</td>
 		</tr>
 		{% endfor %}
 	</tbody>
@@ -50,19 +57,19 @@
 	<tbody>
 		<tr>
 			<td class="text-right" style="width: 70%">
-				{{ __("Net Total") }}
+				<b>{{ __("Net Total") }}</b>
 			</td>
 			<td class="text-right">
-				{{ format_currency(total, currency) }}
+				<b>{{ format_currency(total, currency) }}</b>
 			</td>
 		</tr>
 		{% if discount_amount %}
 		<tr>
 			<td class="text-right" style="width: 75%">
-				{{ __("Discount") }}
+				<b>{{ __("Discount") }}</b>
 			</td>
 			<td class="text-right">
-				{{ format_currency(discount_amount, currency) }}
+				<b>{{ format_currency(discount_amount, currency) }}</b>
 			</td>
 		</tr>
 		{% endif %}
@@ -71,7 +78,7 @@
 				<b>{{ __("Grand Total") }}</b>
 			</td>
 			<td class="text-right">
-				{{ format_currency(grand_total, currency) }}
+				<b>{{ format_currency(grand_total, currency) }}</b>
 			</td>
 		</tr>
 		{% for row in payments%}
@@ -81,7 +88,7 @@
 				<b>{{ row.mode_of_payment }}</b>
 			</td>
 			<td class="text-right">
-				{{ format_currency(row.amount, currency) }}
+				<b>{{ format_currency(row.amount, currency) }}</b>
 			</td>
 		</tr>
 		{% endif %}
@@ -96,20 +103,20 @@
 		{% for row in taxes %}
 		<tr>
 			<td class="text-right" style="width: 75%">
-				{{ row.description }}
+				<b>{{ row.description }}</b>
 			</td>
 			<td class="text-right">
-				{{ format_currency(row.tax_amount, currency) }}
+				<b>{{ format_currency(row.tax_amount, currency) }}</b>
 			</td>
 		</tr>
 		{% endfor %}
 		{% if taxes.length == 0 %}
 		<tr>
 			<td class="text-right" style="width: 75%">
-				{{ __("GST") }}
+				<b>{{ __("GST") }}</b>
 			</td>
 			<td class="text-right">
-				{{ format_currency("0.00", currency) }}
+				<b>{{ format_currency("0.00", currency) }}</b>
 			</td>
 		</tr>
 		{% endif %}
@@ -117,5 +124,5 @@
 </table>
 
 <hr>
-<p class="text-center">{{ warehouse }}</p>
-<p class="text-center">{{ __("Thank you, please visit again.") }}</p>
+<p class="text-center"><b>{{ warehouse }}</b></p>
+<p class="text-center"><b>{{ __("Thank you, please visit again.") }}</b></p>
